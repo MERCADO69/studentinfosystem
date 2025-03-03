@@ -43,36 +43,28 @@ class StudentController extends Controller
     // ✅ Store a new student (Handled by Admin)
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'student_id' => 'required|unique:students,student_id',
-            'last_name' => 'required|string|max:255',
-            'first_name' => 'required|string|max:255',
-            'course' => 'required|string|max:255',
-            'year_level' => 'required|integer|between:1,4',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8',
+            'last_name' => 'required|string',
+            'first_name' => 'required|string',
+            'course' => 'required|string',
+            'year_level' => 'required|integer',
+            'email' => 'required|email|unique:students,email',
+            'password' => 'required|min:6',
         ]);
 
-        // ✅ Step 1: Create a new user for authentication
-        $user = User::create([
-            'name' => $request->first_name . ' ' . $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'student',
+        // Create student and hash the password
+        Student::create([
+            'student_id' => $validatedData['student_id'],
+            'first_name' => $validatedData['first_name'],
+            'last_name' => $validatedData['last_name'],
+            'course' => $validatedData['course'],
+            'year_level' => $validatedData['year_level'],
+            'email' => $validatedData['email'],
+            'password' => Hash::make($validatedData['password']), // ✅ Hash password
         ]);
 
-        // ✅ Step 2: Create a student and link it to the user
-        $student = Student::create([
-            'student_id' => $request->student_id, // This is a manually assigned ID
-            'last_name' => $request->last_name,
-            'first_name' => $request->first_name,
-            'course' => $request->course,
-            'year_level' => $request->year_level,
-            'email' => $request->email,
-            'user_id' => $user->id, // Link student to user
-        ]);
-
-        return redirect()->route('admin.students.list')->with('success', 'Student added successfully!');
+        return redirect()->route('admin.students.list')->with('success', 'Student added successfully');
     }
 
     // ✅ Create student form

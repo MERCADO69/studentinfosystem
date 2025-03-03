@@ -8,7 +8,7 @@ use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\admin\GradeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StudentGradesController;
-
+use App\Http\Controllers\StudentAuthController;
 Route::get('/', function () {
     return redirect('/login'); // Redirect to the login page
 });
@@ -100,6 +100,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('grades/view/{student_id}', [GradeController::class, 'view'])->name('admin.grades.view');
         Route::get('get-student-subjects/{student_id}', [GradeController::class, 'getStudentSubjects']);
     }); // **Closing for Route::prefix('admin')** ✅
+
+
+
+    Route::get('/student/login', [StudentAuthController::class, 'showLoginForm'])->name('student.login');
+    Route::post('/student/login', [StudentAuthController::class, 'login'])->name('student.login.post');
+    Route::post('/student/logout', [StudentAuthController::class, 'logout'])->name('student.logout');
+
 
 }); // **Closing for Route::middleware(['auth', 'admin'])** ✅
 

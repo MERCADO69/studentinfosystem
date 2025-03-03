@@ -24,16 +24,21 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        // Determine the guard from the request (e.g., from a hidden input in the form)
+        $guard = $request->input('guard', 'web');
 
+        // Attempt to authenticate the user
+        if (!Auth::guard($guard)->attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+            return back()->withErrors(['email' => 'Invalid credentials.']);
+        }
+
+        // Regenerate the session to prevent session fixation attacks
         $request->session()->regenerate();
 
+        // Redirect based on the guard
         return redirect()->intended(
-            auth()->user()->role === 'admin'
-            ? route('admin.dashboard')
-            : route('student.dashboard')
+            $guard === 'student' ? route('student.dashboard') : route('admin.dashboard')
         );
-
     }
 
     /**
@@ -41,12 +46,19 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        Auth::guard('web')->logout();
+        // Determine the guard (e.g., from the authenticated user)
+        $guard = Auth::guard('student')->check() ? 'student' : 'web';
 
+        // Logout the user
+        Auth::guard($guard)->logout();
+
+        // Invalidate the session
         $request->session()->invalidate();
 
+        // Regenerate the CSRF token
         $request->session()->regenerateToken();
 
+        // Redirect to the login page
         return redirect('/login');
     }
 }

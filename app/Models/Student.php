@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable; // Change from Model to Authenticatable
 use Illuminate\Notifications\Notifiable;
 
-class Student extends Authenticatable // Extend Authenticatable instead of Model
+class Student extends Authenticatable  // Extend Authenticatable instead of Model
 {
     use HasFactory, Notifiable;
 
@@ -19,6 +19,7 @@ class Student extends Authenticatable // Extend Authenticatable instead of Model
         'year_level',
         'email',
         'password', // ✅ Add password for authentication
+        'role',
     ];
 
     // Hide password from JSON responses

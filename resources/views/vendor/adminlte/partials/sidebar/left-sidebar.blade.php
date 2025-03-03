@@ -19,33 +19,37 @@
                 {{-- Check User Role --}}
                 @if(auth()->user()->role == 'admin')
                     {{-- Admin Sidebar --}}
-
                     <li class="nav-item">
-                        <a href="{{ route('admin.students.create') }}" class="nav-link">
+                        <a href="{{ route('admin.students.create') }}"
+                            class="nav-link {{ request()->routeIs('admin.students.create') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-user-plus"></i>
                             <p>Add Student</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('admin.students.list') }}" class="nav-link">
+                        <a href="{{ route('admin.students.list') }}"
+                            class="nav-link {{ request()->routeIs('admin.students.list') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-users"></i>
                             <p>List of Students</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('admin.enrollments.index') }}" class="nav-link">
+                        <a href="{{ route('admin.enrollments.index') }}"
+                            class="nav-link {{ request()->routeIs('admin.enrollments.index') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-file"></i>
                             <p>Enrollments</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('admin.students.index') }}" class="nav-link">
+                        <a href="{{ route('admin.students.index') }}"
+                            class="nav-link {{ request()->routeIs('admin.students.index') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-graduation-cap"></i>
                             <p>Add Grades</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('admin.subjects.index') }}" class="nav-link">
+                        <a href="{{ route('admin.subjects.index') }}"
+                            class="nav-link {{ request()->routeIs('admin.subjects.index') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-book"></i>
                             <p>Subjects List</p>
                         </a>
@@ -53,8 +57,8 @@
                 @elseif(auth()->user()->role == 'student')
                     {{-- Student Sidebar --}}
                     <li class="nav-item">
-                        <a href="{{ route('student.grades.index') }}" class="nav-link">
-
+                        <a href="{{ route('student.grades.index') }}"
+                            class="nav-link {{ request()->routeIs('student.grades.index') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-graduation-cap"></i>
                             <p>Grades</p>
                         </a>

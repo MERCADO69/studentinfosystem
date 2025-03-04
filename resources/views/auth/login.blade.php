@@ -124,49 +124,45 @@
     <div class="login-container">
         <h1 class="login-title">Student Info System</h1>
 
-        @if (request()->is('student/*'))
-            <form method="POST" action="{{ route('student.login') }}">
-                <input type="hidden" name="guard" value="student"> <!-- Add this line -->
-        @else
-            <form method="POST" action="{{ route('login') }}">
-                <input type="hidden" name="guard" value="web"> <!-- Add this line -->
-        @endif
-                @csrf
-                <!-- Email Address -->
-                <div class="form-group">
-                    <x-input-label for="email" :value="__('Email')" class="input-label" />
-                    <x-text-input id="email" class="form-input" type="email" name="email" :value="old('email')" required
-                        autofocus autocomplete="username" />
-                    <x-input-error :messages="$errors->get('email')" class="error-message" />
-                </div>
 
-                <!-- Password -->
-                <div class="form-group">
-                    <x-input-label for="password" :value="__('Password')" class="input-label" />
-                    <x-text-input id="password" class="form-input" type="password" name="password" required
-                        autocomplete="current-password" />
-                    <x-input-error :messages="$errors->get('password')" class="error-message" />
-                </div>
+        <form method="POST" action="{{ route('login') }}">
+            <input type="hidden"> <!-- Add this line -->
+            @csrf
+            <!-- Email Address -->
+            <div class="form-group">
+                <x-input-label for="email" :value="__('Email')" class="input-label" />
+                <x-text-input id="email" class="form-input" type="email" name="email" :value="old('email')" required
+                    autofocus autocomplete="username" />
+                <x-input-error :messages="$errors->get('email')" class="error-message" />
+            </div>
 
-                <!-- Remember Me -->
-                <div class="form-group">
-                    <label for="remember_me" class="remember-me-label">
-                        <input id="remember_me" type="checkbox" class="form-checkbox" name="remember">
-                        <span class="ms-2">{{ __('Keep me logged in') }}</span>
-                    </label>
-                </div>
+            <!-- Password -->
+            <div class="form-group">
+                <x-input-label for="password" :value="__('Password')" class="input-label" />
+                <x-text-input id="password" class="form-input" type="password" name="password" required
+                    autocomplete="current-password" />
+                <x-input-error :messages="$errors->get('password')" class="error-message" />
+            </div>
 
-                <button type="submit" class="login-button">
-                    {{ __('Sign In') }}
-                </button>
+            <!-- Remember Me -->
+            <div class="form-group">
+                <label for="remember_me" class="remember-me-label">
+                    <input id="remember_me" type="checkbox" class="form-checkbox" name="remember">
+                    <span class="ms-2">{{ __('Keep me logged in') }}</span>
+                </label>
+            </div>
 
-                <div class="login-links">
-                    @if (Route::has('password.request'))
-                        <a class="forgot-link" href="{{ route('password.request') }}">
-                            {{ __('Forgot your password?') }}
-                        </a>
-                    @endif
-                </div>
-            </form>
+            <button type="submit" class="login-button">
+                {{ __('Sign In') }}
+            </button>
+
+            <div class="login-links">
+                @if (Route::has('password.request'))
+                    <a class="forgot-link" href="{{ route('password.request') }}">
+                        {{ __('Forgot your password?') }}
+                    </a>
+                @endif
+            </div>
+        </form>
     </div>
 </x-guest-layout>

@@ -17,15 +17,12 @@
     </button>
 
     {{-- Enrolled Students Table --}}
-    <div class="card">
-        <div class="card-header bg-dark text-white">
-            <h5 class="mb-0"><i class="fas fa-list"></i> Enrolled Students</h5>
-        </div>
+    <div class="card shadow-sm rounded">
         <div class="card-body">
-            <table class="table table-striped">
-                <thead class="table-dark">
+            <table class="table table-bordered text-center align-middle">
+                <thead class="table-light">
                     <tr>
-                        <th>Student Id</th>
+                        <th>Student ID</th>
                         <th>Name</th>
                         <th>Course</th>
                         <th>Year Level</th>
@@ -37,16 +34,14 @@
                 <tbody>
                     @foreach($enrollments as $enrollment)
                         <tr>
-                            <td>{{ $enrollment->student ? $enrollment->student->student_id : 'N/A' }}</td>
-
-
+                            <td class="fw-bold">{{ $enrollment->student ? $enrollment->student->student_id : 'N/A' }}</td>
                             <td>{{ $enrollment->last_name }}, {{ $enrollment->first_name }}</td>
                             <td>{{ $enrollment->course }}</td>
                             <td>{{ $enrollment->year_level }}</td>
                             <td>{{ $enrollment->email }}</td>
                             <td>
                                 @foreach($enrollment->subjects as $subject)
-                                    <span class="badge bg-primary">{{ $subject->subject_name }}</span>
+                                    <span class="badge bg-secondary">{{ $subject->subject_name }}</span>
                                 @endforeach
                             </td>
                             <td>
@@ -69,6 +64,7 @@
             </table>
         </div>
     </div>
+
 
     {{-- Add Student Modal --}}
     <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">

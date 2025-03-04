@@ -8,6 +8,8 @@ use Illuminate\Notifications\Notifiable;
 
 class Student extends Authenticatable  // Extend Authenticatable instead of Model
 {
+
+
     use HasFactory, Notifiable;
 
     // Fields that can be mass-assigned

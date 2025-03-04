@@ -24,21 +24,12 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        // Determine the guard from the request (e.g., from a hidden input in the form)
-        $guard = $request->input('guard', 'web');
-
-        // Attempt to authenticate the user
-        if (!Auth::guard($guard)->attempt($request->only('email', 'password'), $request->boolean('remember'))) {
-            return back()->withErrors(['email' => 'Invalid credentials.']);
-        }
-
-        // Regenerate the session to prevent session fixation attacks
+        $request->authenticate();
         $request->session()->regenerate();
-
-        // Redirect based on the guard
-        return redirect()->intended(
-            $guard === 'student' ? route('student.dashboard') : route('admin.dashboard')
-        );
+        if (session('user_type') === 'student') {
+            return redirect()->route('student.dashboard');
+        }
+        return redirect()->route('admin.dashboard');
     }
 
     /**

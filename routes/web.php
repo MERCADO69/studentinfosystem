@@ -100,10 +100,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     });
 });
 
-// Student Login Routes
-Route::get('/student/login', [StudentAuthController::class, 'showLoginForm'])->name('student.login');
-Route::post('/student/login', [StudentAuthController::class, 'login'])->name('student.login.post');
-Route::post('/student/logout', [StudentAuthController::class, 'logout'])->name('student.logout');
 
 // Student Dashboard & Modules
 Route::middleware('student')->group(function () {

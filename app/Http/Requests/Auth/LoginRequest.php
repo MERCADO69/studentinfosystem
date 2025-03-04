@@ -36,20 +36,18 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
-
-        // Determine the guard from the request (e.g., from a hidden input in the form)
-        $guard = $this->input('guard', 'web');
-
-        // Attempt to authenticate the user
-        if (!Auth::guard($guard)->attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
-
-            throw ValidationException::withMessages([
-                'email' => 'These credentials do not match our records.',
-            ]);
+        if (Auth::guard('web')->attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+            session(['user_type' => 'user']);
+            RateLimiter::clear($this->throttleKey());
         }
-
-        RateLimiter::clear($this->throttleKey());
+        if (Auth::guard('student')->attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+            session(['user_type' => 'student']);
+            RateLimiter::clear($this->throttleKey());
+        }
+        RateLimiter::hit($this->throttleKey());
+        throw ValidationException::withMessages([
+            'email' => 'These credentials do not match our records.',
+        ]);
     }
 
     /**

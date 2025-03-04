@@ -43,28 +43,35 @@ class StudentController extends Controller
     // ✅ Store a new student (Handled by Admin)
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        $request->validate([
             'student_id' => 'required|unique:students,student_id',
-            'last_name' => 'required|string',
-            'first_name' => 'required|string',
-            'course' => 'required|string',
-            'year_level' => 'required|integer',
-            'email' => 'required|email|unique:students,email',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'course' => 'required',
+            'year_level' => 'required',
             'password' => 'required|min:6',
         ]);
 
-        // Create student and hash the password
-        Student::create([
-            'student_id' => $validatedData['student_id'],
-            'first_name' => $validatedData['first_name'],
-            'last_name' => $validatedData['last_name'],
-            'course' => $validatedData['course'],
-            'year_level' => $validatedData['year_level'],
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']), // ✅ Hash password
+        // Create student
+        $student = Student::create([
+            'student_id' => $request->student_id,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'course' => $request->course,
+            'year_level' => $request->year_level,
         ]);
 
-        return redirect()->route('admin.students.list')->with('success', 'Student added successfully');
+        // Create user with the correct foreign key reference
+        User::create([
+            'student_id' => $student->student_id, // ✅ Use the auto-increment ID, not student_id
+            'name' => $student->first_name . ' ' . $student->last_name,
+            'email' => $student->email,
+            'password' => bcrypt($request->password),
+        ]);
+
+        return redirect()->back()->with('success', 'Student and user created successfully!');
     }
 
     // ✅ Create student form

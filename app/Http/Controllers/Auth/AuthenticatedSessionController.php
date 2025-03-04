@@ -25,11 +25,15 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
+
         $request->session()->regenerate();
-        if (session('user_type') === 'student') {
-            return redirect()->route('student.dashboard');
-        }
-        return redirect()->route('admin.dashboard');
+
+        return redirect()->intended(
+            auth()->user()->role === 'admin'
+            ? route('admin.dashboard')
+            : route('student.dashboard')
+        );
+
     }
 
     /**
@@ -37,19 +41,12 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        // Determine the guard (e.g., from the authenticated user)
-        $guard = Auth::guard('student')->check() ? 'student' : 'web';
+        Auth::guard('web')->logout();
 
-        // Logout the user
-        Auth::guard($guard)->logout();
-
-        // Invalidate the session
         $request->session()->invalidate();
 
-        // Regenerate the CSRF token
         $request->session()->regenerateToken();
 
-        // Redirect to the login page
         return redirect('/login');
     }
 }

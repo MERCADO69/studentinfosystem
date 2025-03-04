@@ -124,10 +124,9 @@
     <div class="login-container">
         <h1 class="login-title">Student Info System</h1>
 
-
         <form method="POST" action="{{ route('login') }}">
-            <input type="hidden"> <!-- Add this line -->
             @csrf
+
             <!-- Email Address -->
             <div class="form-group">
                 <x-input-label for="email" :value="__('Email')" class="input-label" />

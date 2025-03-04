@@ -99,11 +99,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::delete('grades/{id}', [GradeController::class, 'destroy'])->name('admin.grades.destroy');
         Route::get('grades/view/{student_id}', [GradeController::class, 'view'])->name('admin.grades.view');
         Route::get('get-student-subjects/{student_id}', [GradeController::class, 'getStudentSubjects']);
-    }); // **Closing for Route::prefix('admin')** ✅
+    });
 
-}); // **Closing for Route::middleware(['auth', 'admin'])** ✅
-
-
+});
 
 // Student Dashboard & Modules
 Route::middleware(['auth', 'student'])->group(function () {
@@ -111,8 +109,6 @@ Route::middleware(['auth', 'student'])->group(function () {
     Route::get('/student/grades', [StudentGradesController::class, 'index'])->name('student.grades.index');
 
 });
-
-
 
 require __DIR__ . '/auth.php';
 

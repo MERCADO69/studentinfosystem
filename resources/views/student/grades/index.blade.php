@@ -12,8 +12,8 @@
             <h5 class="mb-0"><i class="fas fa-list"></i> Your Grades</h5>
         </div>
         <div class="card-body">
-            @if(empty($grades))
-                <p>hasdjkfhasjkdasjkfhaksjfkds</p>
+            @if($grades->isEmpty())
+                <p class="text-center text-muted">No grades available.</p>
             @else
                 <table class="table table-striped">
                     <thead class="table-dark">
@@ -33,11 +33,9 @@
                                 <td>{{ $grade['units'] }}</td>
                                 <td>{{ $grade['grade'] }}</td>
                                 <td>
-
                                     <span style="color: {{ $grade['grade'] == 5.00 ? 'red' : 'green' }}; font-weight: bold;">
                                         {{ $grade['grade'] == 5.00 ? 'Failed' : 'Passed' }}
                                     </span>
-
                                 </td>
                             </tr>
                         @endforeach

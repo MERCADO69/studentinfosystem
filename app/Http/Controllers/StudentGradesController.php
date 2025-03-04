@@ -13,7 +13,7 @@ class StudentGradesController extends Controller
 
         $user = Auth::user();
 
-        if (!$user->student) {
+        if (!$user->student_id) {
             return back()->with('error', 'No student record found.');
         }
 

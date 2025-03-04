@@ -13,7 +13,7 @@
         </div>
         <div class="card-body">
             @if($grades->isEmpty())
-                <p class="text-center text-muted">No grades availablesss.</p>
+                <p class="text-center text-muted">No grades availabless.</p>
             @else
                 <table class="table table-striped">
                     <thead class="table-dark">

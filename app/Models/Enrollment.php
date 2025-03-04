@@ -22,8 +22,9 @@ class Enrollment extends Model
     // Relationship: Enrollment belongs to a Student
     public function student()
     {
-        return $this->belongsTo(Student::class, 'student_id', 'id');
+        return $this->belongsTo(Student::class, 'student_id', 'student_id'); // Ensure correct foreign key
     }
+
 
     // Relationship: Enrollment has many Subjects (many-to-many)
     public function subjects()

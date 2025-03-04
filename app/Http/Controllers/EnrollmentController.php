@@ -14,8 +14,10 @@ class EnrollmentController extends Controller
     // Display the list of enrolled students
     public function index()
     {
-        // Fetch all enrollments with their related subjects
-        $enrollments = Enrollment::with(['subjects', 'student'])->get();
+        // Fetch all enrollments with their related student and subjects
+        $enrollments = Enrollment::with(['student', 'subjects'])->get();
+
+        // Fetch all students and subjects
         $students = Student::all();
         $subjects = Subject::all();
 
@@ -23,28 +25,32 @@ class EnrollmentController extends Controller
         return view('admin.enrollments.index', compact('enrollments', 'students', 'subjects'));
     }
 
+
     public function store(Request $request)
     {
         // Validate the request
         $request->validate([
-            'student_select' => 'required|exists:students,id',
+            'student_select' => 'required|exists:students,id', // Ensure student exists
             'last_name' => 'required|string',
             'first_name' => 'required|string',
             'course' => 'required|string',
             'year_level' => 'required|integer',
             'subject_id' => 'required|array',
             'subject_id.*' => 'exists:subjects,id',
-            'email' => 'required|email', // Ensure email is validated
+            'email' => 'required|email',
         ]);
 
-        // Create the enrollment
+        // Retrieve the student record using the selected student's ID
+        $student = Student::findOrFail($request->student_select);
+
+        // Create the enrollment using the actual student_id
         $enrollment = Enrollment::create([
-            'student_id' => $request->student_select,
+            'student_id' => $student->id, // Store actual student number
             'last_name' => $request->last_name,
             'first_name' => $request->first_name,
             'course' => $request->course,
             'year_level' => $request->year_level,
-            'email' => $request->email, // Include email field
+            'email' => $request->email,
         ]);
 
         // Attach selected subjects to the enrollment
@@ -52,6 +58,7 @@ class EnrollmentController extends Controller
 
         return redirect()->route('admin.enrollments.index')->with('success', 'Student successfully enrolled!');
     }
+
 
     // Edit student enrollment details
     public function edit($id)

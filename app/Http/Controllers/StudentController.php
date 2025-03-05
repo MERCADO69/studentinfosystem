@@ -7,6 +7,7 @@ use App\Models\Student;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Enrollment;
+use Illuminate\Support\Facades\DB;
 
 class StudentController extends Controller
 {
@@ -140,15 +141,31 @@ class StudentController extends Controller
 
     public function destroy($id)
     {
-        $student = Student::findOrFail($id);
+        // Check if the student exists
+        $student = Student::find($id);
 
-        // Instead of deleting the user, set student_id to NULL in users table
-        User::where('student_id', $student->student_id)->update(['student_id' => null]);
+        if ($student) {
+            // Check if the student is enrolled in any subject
+            $isEnrolled = Enrollment::where('student_id', $student->student_id)->exists();
 
-        // Delete only the student record
-        $student->delete();
+            if ($isEnrolled) {
+                // If the student is enrolled, prevent deletion and show an error
+                return redirect()->route('admin.students.index')->with('error', 'Student cannot be deleted because they are enrolled in a subject.');
+            } else {
+                // If the student is not enrolled, proceed with deletion
+                DB::transaction(function () use ($student) {
+                    // Delete the corresponding user from the users table
+                    User::where('student_id', $student->student_id)->delete();
 
-        return redirect()->route('admin.students.list')->with('success', 'Student deleted successfully');
+                    // Delete the student from the students table
+                    $student->delete();
+                });
+
+                return redirect()->route('admin.students.index')->with('success', 'Student deleted successfully.');
+            }
+        }
+
+        return redirect()->route('admin.students.index')->with('error', 'Student not found.');
     }
 
 

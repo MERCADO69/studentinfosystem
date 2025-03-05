@@ -10,12 +10,18 @@
 @endsection
 
 @section('content')
+    <!-- Error message below the title -->
+    @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+
     <div class="card">
         <div class="card-header">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSubjectModal">
                 Add Subject
             </button>
         </div>
+
         <div class="card-body">
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>

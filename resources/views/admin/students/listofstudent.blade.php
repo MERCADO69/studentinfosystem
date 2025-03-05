@@ -5,14 +5,19 @@
 @section('content_header')
     <h1>List of Students</h1>
 
-    {{-- Success Message Below "List of Students" --}}
+    {{-- Success or Error Message --}}
     @if(session('success'))
         <div class="alert alert-success mt-2">
             {{ session('success') }}
         </div>
     @endif
+    @if(session('error'))
+        <div class="alert alert-danger mt-2">
+            {{ session('error') }}
+        </div>
+    @endif
 
-    {{-- Add Student Button Below the Heading --}}
+    {{-- Add Student Button --}}
     <div class="mt-3">
         <a href="{{ route('admin.students.create') }}" class="btn btn-primary">Add Student</a>
     </div>
@@ -45,12 +50,20 @@
                             <td>
                                 <a href="{{ route('admin.students.edit', $student->id) }}"
                                     class="btn btn-warning btn-sm">Edit</a>
+
+                                <!-- Check if the student can be deleted -->
                                 <form action="{{ route('admin.students.destroy', $student->id) }}" method="POST"
                                     class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm"
-                                        onclick="return confirm('Are you sure?')">Delete</button>
+                                    @if (\App\Models\Enrollment::where('student_id', $student->student_id)->exists())
+                                        <button type="submit" class="btn btn-danger btn-sm" disabled>
+                                            Cannot Delete (Enrolled)
+                                        </button>
+                                    @else
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Are you sure?')">Delete</button>
+                                    @endif
                                 </form>
                             </td>
                         </tr>

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Student;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -11,13 +12,17 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-    public function run(): void
+    public function run()
     {
-        // User::factory(10)->create();
+        // Get all students and shuffle to ensure uniqueness
+        $students = Student::select('student_id', 'first_name', 'last_name', 'email')->get();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        foreach ($students as $student) {
+            User::factory()->create([
+                'student_id' => $student->student_id,
+                'name' => $student->first_name . ' ' . $student->last_name, // Combine first and last name
+                'email' => $student->email,
+            ]);
+        }
     }
 }

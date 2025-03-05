@@ -30,8 +30,10 @@ class Enrollment extends Model
     // Relationship: Enrollment has many Subjects (many-to-many)
     public function subjects()
     {
-        return $this->belongsToMany(Subject::class, 'enrollment_subject', 'enrollment_id', 'subject_id');
+        return $this->belongsToMany(Subject::class, 'enrollment_subject', 'enrollment_id', 'subject_id')
+            ->withPivot('grade', 'remarks'); // Add pivot data (grade and remarks)
     }
+
 
     public function grades()
     {

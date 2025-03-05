@@ -31,7 +31,8 @@ class Student extends Authenticatable  // Extend Authenticatable instead of Mode
     // Relationship: Student has many enrollments
     public function enrollments()
     {
-        return $this->hasMany(Enrollment::class, 'student_id', 'student_id');
+        return $this->belongsToMany(Subject::class, 'enrollment_subject', 'student_id', 'subject_id')
+            ->withPivot('grade', 'remarks'); // Fetch grade and remarks in the pivot table
     }
 
     public function user()

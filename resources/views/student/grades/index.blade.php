@@ -28,9 +28,18 @@
                                     <td>{{ $grade['subject_name'] }}</td>
                                     <td>{{ $grade['subject_code'] }}</td>
                                     <td>{{ $grade['units'] }}</td>
-                                    <td>{{ number_format($grade['grade'], 2) }}</td>
                                     <td>
-                                        @if($grade['grade'] == 5.00)
+                                        @if($grade['grade'] === null || $grade['grade'] === 0.00)
+                                            <span class="text-muted">N/A</span>
+                                        @else
+                                            {{ number_format((float) $grade['grade'], 2) }}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($grade['grade'] === null)
+                                            <span class="text-muted fw-bold">No Grade</span>
+                                            <!-- Show "No Grade" if no grade is assigned -->
+                                        @elseif($grade['grade'] == 5.00)
                                             <span class="text-danger fw-bold">Failed</span>
                                         @else
                                             <span class="text-success fw-bold">Passed</span>
@@ -44,22 +53,24 @@
                     {{-- Calculate and Display Average --}}
                     <div class="text-center mt-3">
                         @php
-                            // Calculate weighted average (assuming 'units' and 'grade' are numeric)
                             $totalUnits = 0;
                             $weightedGradeSum = 0;
+                            $gradedSubjects = 0;
 
                             foreach ($grades as $grade) {
-                                $totalUnits += $grade['units'];
-                                $weightedGradeSum += $grade['units'] * $grade['grade'];
+                                // Only include subjects with valid grades (greater than 0.00)
+                                if ($grade['grade'] !== null && $grade['grade'] > 0) {
+                                    $totalUnits += (float) $grade['units'];
+                                    $weightedGradeSum += (float) $grade['units'] * (float) $grade['grade'];
+                                    $gradedSubjects++;
+                                }
                             }
 
-                            $averageGrade = $totalUnits > 0 ? $weightedGradeSum / $totalUnits : 0;
+                            $averageGrade = $gradedSubjects > 0 ? $weightedGradeSum / $totalUnits : 0;
                         @endphp
-
-
                     </div>
                     <h6 class="mt-3">
-                        Average Grade: {{ number_format($averageGrade, 2) }}
+                        Average Grade: {{ number_format((float) $averageGrade, 2) }}
                     </h6>
             @endif
         </div>

@@ -48,13 +48,26 @@ class SubjectController extends Controller
 
     public function destroy($id)
     {
-        Subject::findOrFail($id)->delete();
+        $subject = Subject::findOrFail($id);
 
-        // Reset the IDs to fill the missing gaps
+        // Check if there are any enrollments tied to this subject via the pivot table
+        if ($subject->enrollments()->count() > 0) {
+            // If students are enrolled in the subject, prevent deletion and return an error message
+            return redirect()->route('admin.subjects.index')
+                ->with('error', 'Subject cannot be deleted because students are enrolled.');
+        }
+
+        // Proceed to delete the subject if no enrollments are linked
+        $subject->delete();
+
+        // Optionally reset the IDs to fill missing gaps
         DB::statement('SET @count = 0;');
         DB::statement('UPDATE subjects SET id = @count:= @count + 1;');
         DB::statement('ALTER TABLE subjects AUTO_INCREMENT = 1;');
 
-        return redirect()->route('admin.subjects.index')->with('success', 'Subject deleted and IDs reordered.');
+        return redirect()->route('admin.subjects.index')
+            ->with('success', 'Subject deleted successfully and IDs reordered.');
     }
+
+
 }

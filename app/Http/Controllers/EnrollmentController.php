@@ -14,22 +14,20 @@ class EnrollmentController extends Controller
     // Display the list of enrolled students
     public function index()
     {
-        // Fetch all enrollments with their related student and subjects
-        $enrollments = Enrollment::with(['student', 'subjects'])->get();
-
-        // Fetch all students and subjects
         $students = Student::all();
+        $users = User::whereNotNull('student_id')->get(); // Fetch users who were students
         $subjects = Subject::all();
+        $enrollments = Enrollment::all();
 
-        // Pass the data to the view
-        return view('admin.enrollments.index', compact('enrollments', 'students', 'subjects'));
+        return view('admin.enrollments.index', compact('students', 'users', 'subjects', 'enrollments'));
     }
+
 
 
     public function store(Request $request)
     {
         $request->validate([
-            'student_select' => 'required|exists:students,id', // Ensure student exists
+            'student_select' => 'required',
             'last_name' => 'required|string',
             'first_name' => 'required|string',
             'course' => 'required|string',
@@ -39,12 +37,26 @@ class EnrollmentController extends Controller
             'email' => 'required|email',
         ]);
 
-        // Retrieve the student record
-        $student = Student::findOrFail($request->student_select);
+        // Check if the selected student is from `users` or `students`
+        $student = Student::find($request->student_select);
+        if (!$student) {
+            $user = User::where('student_id', $request->student_select)->first();
+            if (!$user) {
+                return redirect()->back()->with('error', 'Selected student not found.');
+            }
+            $student_id = $user->student_id; // Use student_id from users table
+        } else {
+            $student_id = $student->student_id;
+        }
 
-        // ✅ Store the actual student_id (student number)
+        // Check if the student is already enrolled
+        if (Enrollment::where('student_id', $student_id)->exists()) {
+            return redirect()->back()->with('error', 'Student is already enrolled.');
+        }
+
+        // Store the enrollment
         $enrollment = Enrollment::create([
-            'student_id' => $student->student_id, // Correct reference
+            'student_id' => $student_id,
             'last_name' => $request->last_name,
             'first_name' => $request->first_name,
             'course' => $request->course,
@@ -57,8 +69,6 @@ class EnrollmentController extends Controller
 
         return redirect()->route('admin.enrollments.index')->with('success', 'Student successfully enrolled!');
     }
-
-
 
     // Edit student enrollment details
     public function edit($id)

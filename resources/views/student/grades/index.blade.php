@@ -8,15 +8,12 @@
 
 @section('content')
     <div class="card">
-        <div class="card-header bg-dark text-white">
-            <h5 class="mb-0"><i class="fas fa-list"></i> Your Grades</h5>
-        </div>
         <div class="card-body">
             @if($grades->isEmpty())
-                <p class="text-center text-muted">No grades availabless.</p>
+                <p class="text-center text-muted">No grades available.</p>
             @else
-                <table class="table table-striped">
-                    <thead class="table-dark">
+                <table class="table table-bordered">
+                    <thead class="table-light">
                         <tr>
                             <th>Subject</th>
                             <th>Subject Code</th>
@@ -31,9 +28,15 @@
                                 <td>{{ $grade['subject_name'] }}</td>
                                 <td>{{ $grade['subject_code'] }}</td>
                                 <td>{{ $grade['units'] }}</td>
-                                <td>{{ $grade['grade'] }}</td>
                                 <td>
-                                    <span style="color: {{ $grade['grade'] == 5.00 ? 'red' : 'green' }}; font-weight: bold;">
+                                    <span
+                                        class="badge 
+                                                                                                    {{ $grade['grade'] >= 3.00 ? 'bg-danger' : 'bg-success' }}">
+                                        {{ number_format($grade['grade'], 2) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="{{ $grade['grade'] == 5.00 ? 'text-danger fw-bold' : 'text-success fw-bold' }}">
                                         {{ $grade['grade'] == 5.00 ? 'Failed' : 'Passed' }}
                                     </span>
                                 </td>

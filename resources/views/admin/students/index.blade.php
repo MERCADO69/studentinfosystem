@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Grades')
+@section('title', 'Add Grades')
 
 @section('content_header')
     <h1>Grades of Students</h1>

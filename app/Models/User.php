@@ -52,9 +52,10 @@ class User extends Authenticatable
         ];
     }
 
+    // User.php
     public function student()
     {
-        return $this->hasOne(Student::class, 'user_id');
+        return $this->belongsTo(Student::class, 'student_id', 'student_id'); // Corrected to use 'student_id'
     }
 
 }

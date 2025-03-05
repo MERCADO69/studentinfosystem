@@ -20,9 +20,10 @@ class Enrollment extends Model
     ];
 
     // Relationship: Enrollment belongs to a Student
+    // Enrollment.php
     public function student()
     {
-        return $this->belongsTo(Student::class, 'student_id', 'student_id'); // Ensure correct foreign key
+        return $this->belongsTo(Student::class, 'student_id', 'student_id'); // Corrected to use 'student_id'
     }
 
 

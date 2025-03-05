@@ -28,7 +28,6 @@ class EnrollmentController extends Controller
 
     public function store(Request $request)
     {
-        // Validate the request
         $request->validate([
             'student_select' => 'required|exists:students,id', // Ensure student exists
             'last_name' => 'required|string',
@@ -40,12 +39,12 @@ class EnrollmentController extends Controller
             'email' => 'required|email',
         ]);
 
-        // Retrieve the student record using the selected student's ID
+        // Retrieve the student record
         $student = Student::findOrFail($request->student_select);
 
-        // Create the enrollment using the actual student_id
+        // ✅ Store the actual student_id (student number)
         $enrollment = Enrollment::create([
-            'student_id' => $student->id, // Store actual student number
+            'student_id' => $student->student_id, // Correct reference
             'last_name' => $request->last_name,
             'first_name' => $request->first_name,
             'course' => $request->course,
@@ -58,6 +57,7 @@ class EnrollmentController extends Controller
 
         return redirect()->route('admin.enrollments.index')->with('success', 'Student successfully enrolled!');
     }
+
 
 
     // Edit student enrollment details
@@ -94,11 +94,31 @@ class EnrollmentController extends Controller
             'email' => $request->email,
         ]);
 
+        // Update the student's details
+        if ($enrollment->student) {
+            $enrollment->student->update([
+                'last_name' => $request->last_name,
+                'first_name' => $request->first_name,
+                'course' => $request->course,
+                'year_level' => $request->year_level,
+                'email' => $request->email,
+            ]);
+        }
+
+        // Update the user's details if a linked account exists
+        if ($enrollment->student && $enrollment->student->user) {
+            $enrollment->student->user->update([
+                'name' => $request->first_name . ' ' . $request->last_name,
+                'email' => $request->email,
+            ]);
+        }
+
         // Sync subjects in the pivot table
         $enrollment->subjects()->sync($request->subject_id);
 
         return redirect()->route('admin.enrollments.index')->with('success', 'Enrollment updated successfully!');
     }
+
 
     // Delete enrollment
     public function destroy($id)

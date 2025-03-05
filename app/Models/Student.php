@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable; // Change from Model to Authenticatable
 use Illuminate\Notifications\Notifiable;
@@ -34,4 +33,10 @@ class Student extends Authenticatable  // Extend Authenticatable instead of Mode
     {
         return $this->hasMany(Enrollment::class, 'student_id', 'student_id');
     }
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'student_id', 'student_id'); // Corrected to use 'student_id'
+    }
+
 }

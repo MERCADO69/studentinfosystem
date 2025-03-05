@@ -41,10 +41,11 @@ class StudentController extends Controller
 
 
     // ✅ Store a new student (Handled by Admin)
+    // StudentController.php
     public function store(Request $request)
     {
         $request->validate([
-            'student_id' => 'required|unique:students,_id',
+            'student_id' => 'required|unique:students,student_id', // ✅ Correct column name
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => 'required|email|unique:users,email',
@@ -53,26 +54,31 @@ class StudentController extends Controller
             'password' => 'required|min:6',
         ]);
 
-        // Create student
-        $student = Student::create([
-            'student_id' => $request->student_id,
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'course' => $request->course,
-            'year_level' => $request->year_level,
-        ]);
+        try {
+            // Create student
+            $student = Student::create([
+                'student_id' => $request->student_id,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'course' => $request->course,
+                'year_level' => $request->year_level,
+            ]);
 
-        // Create user with the correct foreign key reference
-        User::create([
-            'student_id' => $student->student_id, // ✅ Use the auto-increment ID, not student_id
-            'name' => $student->first_name . ' ' . $student->last_name,
-            'email' => $student->email,
-            'password' => bcrypt($request->password),
-        ]);
+            // Create user with correct foreign key reference
+            User::create([
+                'student_id' => $student->student_id, // ✅ Use the `student_id` instead of `id`
+                'name' => $student->first_name . ' ' . $student->last_name,
+                'email' => $student->email,
+                'password' => bcrypt($request->password),
+            ]);
 
-        return redirect()->back()->with('success', 'Student and user created successfully!');
+            return redirect()->back()->with('success', 'Student and user created successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
     }
+
 
     // ✅ Create student form
     public function create()
@@ -96,6 +102,7 @@ class StudentController extends Controller
         $student = Student::findOrFail($id);
         return view('admin.students.edit', compact('student'));
     }
+    // StudentController.php
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -117,37 +124,30 @@ class StudentController extends Controller
         ]);
 
         // Find the associated user and update their information
-        if ($student->user_id) {
-            $user = User::find($student->user_id);
-            if ($user) {
-                $user->update([
-                    'name' => $request->first_name . ' ' . $request->last_name,
-                    'email' => $request->email,
-                ]);
-            }
+        $user = User::where('student_id', $student->student_id)->first(); // Use `student_id` to find the user
+        if ($user) {
+            $user->update([
+                'name' => $request->first_name . ' ' . $request->last_name,
+                'email' => $request->email,
+            ]);
         }
 
         return redirect()->route('admin.students.list')->with('success', 'Student updated successfully');
     }
 
-
     public function destroy($id)
     {
         $student = Student::findOrFail($id);
 
-        // Delete the associated user if exists
-        if ($student->user_id) {
-            $user = User::find($student->user_id);
-            if ($user) {
-                $user->delete(); // Delete the user from the users table
-            }
-        }
+        // Instead of deleting the user, set student_id to NULL in users table
+        User::where('student_id', $student->student_id)->update(['student_id' => null]);
 
-        // Delete the student record
+        // Delete only the student record
         $student->delete();
 
         return redirect()->route('admin.students.list')->with('success', 'Student deleted successfully');
     }
+
 
 
 }

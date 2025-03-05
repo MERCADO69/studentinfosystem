@@ -4,12 +4,13 @@
 
 @section('content_header')
     <h1>Enrollments</h1>
+    @if (session('success'))
+        <div class="alert alert-success mt-2">
+            {{ session('success') }}
+        </div>
+    @endif
 @endsection
-@if (session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
+
 @section('content')
     {{-- Add Student Button --}}
     <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addStudentModal">

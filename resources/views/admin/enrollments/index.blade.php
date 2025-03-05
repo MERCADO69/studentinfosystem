@@ -12,11 +12,10 @@
         <i class="fas fa-user-plus"></i> Enroll Student
     </button>
 
-    {{-- Success Alert (Moved Below the Button) --}}
+    {{-- Success Alert --}}
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
             {{ session('success') }}
-
         </div>
     @endif
 
@@ -44,9 +43,9 @@
                             <td>{{ $enrollment->year_level }}</td>
                             <td>{{ $enrollment->email }}</td>
                             <td>
-                                @foreach($enrollment->subjects as $subject)
-                                    <span class="badge bg-secondary">{{ $subject->subject_name }}</span>
-                                @endforeach
+                                <button class="btn btn-info btn-sm view-subjects" data-enrollment-id="{{ $enrollment->id }}">
+                                    <i class="fas fa-book"></i> View Subjects
+                                </button>
                             </td>
                             <td>
                                 <a href="{{ route('admin.enrollments.edit', $enrollment->id) }}" class="btn btn-warning btn-sm">
@@ -69,6 +68,19 @@
         </div>
     </div>
 
+    {{-- Subjects Modal --}}
+    <div class="modal fade" id="subjectsModal" tabindex="-1" aria-labelledby="subjectsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title" id="subjectsModalLabel">List of Student Enrolled Subjects</h5>
+                </div>
+                <div class="modal-body">
+                    <ul id="subjectsList" class="list-group"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- Add Student Modal --}}
     <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
@@ -76,8 +88,7 @@
             <div class="modal-content shadow-lg">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="addStudentModalLabel"><i class="fas fa-user-graduate"></i> Select a Subject
-                        for the student</h5>
-
+                        for the Student</h5>
                 </div>
                 <div class="modal-body">
                     <form action="{{ route('admin.enrollments.store') }}" method="POST">
@@ -99,44 +110,16 @@
                             </select>
                         </div>
 
-                        {{-- Student Details (Autofilled) --}}
+                        {{-- Autofilled Student Details --}}
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="student_id" class="form-label fw-bold">Student ID</label>
-                                    <input type="text" class="form-control" name="student_id" id="student_id" readonly>
+                            @foreach(['student_id' => 'Student ID', 'last_name' => 'Last Name', 'first_name' => 'First Name', 'course' => 'Course', 'year_level' => 'Year Level', 'email' => 'Email'] as $field => $label)
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="{{ $field }}" class="form-label fw-bold">{{ $label }}</label>
+                                        <input type="text" class="form-control" name="{{ $field }}" id="{{ $field }}" readonly>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="last_name" class="form-label fw-bold">Last Name</label>
-                                    <input type="text" class="form-control" name="last_name" id="last_name" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="first_name" class="form-label fw-bold">First Name</label>
-                                    <input type="text" class="form-control" name="first_name" id="first_name" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="course" class="form-label fw-bold">Course</label>
-                                    <input type="text" class="form-control" name="course" id="course" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="year_level" class="form-label fw-bold">Year Level</label>
-                                    <input type="text" class="form-control" name="year_level" id="year_level" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="email" class="form-label fw-bold">Email</label>
-                                    <input type="email" class="form-control" name="email" id="email" readonly>
-                                </div>
-                            </div>
+                            @endforeach
                         </div>
 
                         {{-- Subject Selection --}}
@@ -186,17 +169,38 @@
             if (studentSelect) {
                 studentSelect.addEventListener('change', function () {
                     let selected = this.options[this.selectedIndex];
-
-                    document.getElementById('student_id').value = selected.dataset.student_id || '';
-                    document.getElementById('last_name').value = selected.dataset.last_name || '';
-                    document.getElementById('first_name').value = selected.dataset.first_name || '';
-                    document.getElementById('course').value = selected.dataset.course || '';
-                    document.getElementById('year_level').value = selected.dataset.year_level || '';
-                    document.getElementById('email').value = selected.dataset.email || '';
+                    ['student_id', 'last_name', 'first_name', 'course', 'year_level', 'email'].forEach(field => {
+                        document.getElementById(field).value = selected.dataset[field] || '';
+                    });
                 });
-            } else {
-                console.error('Student select element not found');
             }
+
+            document.querySelectorAll('.view-subjects').forEach(button => {
+                button.addEventListener('click', function () {
+                    let enrollmentId = this.getAttribute('data-enrollment-id');
+
+                    fetch(`/admin/enrollments/${enrollmentId}/subjects`)
+                        .then(response => response.json())
+                        .then(data => {
+                            let subjectsList = document.getElementById('subjectsList');
+                            subjectsList.innerHTML = '';
+
+                            if (data.subjects.length > 0) {
+                                data.subjects.forEach(subject => {
+                                    let listItem = document.createElement('li');
+                                    listItem.className = 'list-group-item';
+                                    listItem.textContent = subject.subject_name;
+                                    subjectsList.appendChild(listItem);
+                                });
+                            } else {
+                                subjectsList.innerHTML = '<li class="list-group-item text-muted">No subjects enrolled.</li>';
+                            }
+
+                            new bootstrap.Modal(document.getElementById('subjectsModal')).show();
+                        })
+                        .catch(error => console.error('Error fetching subjects:', error));
+                });
+            });
         });
     </script>
 @endsection

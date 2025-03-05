@@ -49,6 +49,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/enrollments', [EnrollmentController::class, 'store'])->name('admin.enrollments.store');
     Route::post('/admin/enrollments', [EnrollmentController::class, 'store'])->name('admin.enrollments.store');
     Route::delete('/admin/students/{id}', [StudentController::class, 'destroy'])->name('admin.students.destroy');
+    Route::get('/admin/enrollments/{id}/subjects', [EnrollmentController::class, 'getSubjects']);
 
 
     Route::prefix('admin')->middleware(['auth'])->group(function () {

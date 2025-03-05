@@ -51,7 +51,7 @@ class StudentController extends Controller
             'email' => 'required|email|unique:users,email',
             'course' => 'required',
             'year_level' => 'required',
-            'password' => 'required|min:6',
+            'password' => 'nullable|min:6', // make the password field optional
         ]);
 
         try {
@@ -65,12 +65,15 @@ class StudentController extends Controller
                 'year_level' => $request->year_level,
             ]);
 
+            // Set the default password if not provided by the user
+            $password = $request->password ? bcrypt($request->password) : bcrypt('12345678');
+
             // Create user with correct foreign key reference
             User::create([
                 'student_id' => $student->student_id, // ✅ Use the `student_id` instead of `id`
                 'name' => $student->first_name . ' ' . $student->last_name,
                 'email' => $student->email,
-                'password' => bcrypt($request->password),
+                'password' => $password,  // Use default or provided password
             ]);
 
             return redirect()->back()->with('success', 'Student and user created successfully!');

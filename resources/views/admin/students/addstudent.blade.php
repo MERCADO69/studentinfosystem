@@ -88,13 +88,9 @@
                     <small class="text-danger">{{ $message }}</small>
                 @enderror
             </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control" required>
-                @error('password')
-                    <small class="text-danger">{{ $message }}</small>
-                @enderror
-            </div>
+
+            {{-- Password field removed, as the password will be set automatically --}}
+
             <button type="submit" class="btn btn-primary">Add Student</button>
         </form>
     </div>

@@ -12,38 +12,55 @@
             @if($grades->isEmpty())
                 <p class="text-center text-muted">No grades available.</p>
             @else
-                <table class="table table-bordered">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Subject</th>
-                            <th>Subject Code</th>
-                            <th>Units</th>
-                            <th>Grade</th>
-                            <th>Remarks</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($grades as $grade)
+                    <table class="table table-bordered">
+                        <thead class="table-light">
                             <tr>
-                                <td>{{ $grade['subject_name'] }}</td>
-                                <td>{{ $grade['subject_code'] }}</td>
-                                <td>{{ $grade['units'] }}</td>
-                                <td>
-                                    <span
-                                        class="badge 
-                                                                                                    {{ $grade['grade'] >= 3.00 ? 'bg-danger' : 'bg-success' }}">
-                                        {{ number_format($grade['grade'], 2) }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="{{ $grade['grade'] == 5.00 ? 'text-danger fw-bold' : 'text-success fw-bold' }}">
-                                        {{ $grade['grade'] == 5.00 ? 'Failed' : 'Passed' }}
-                                    </span>
-                                </td>
+                                <th>Subject</th>
+                                <th>Subject Code</th>
+                                <th>Units</th>
+                                <th>Grade</th>
+                                <th>Remarks</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach($grades as $grade)
+                                <tr>
+                                    <td>{{ $grade['subject_name'] }}</td>
+                                    <td>{{ $grade['subject_code'] }}</td>
+                                    <td>{{ $grade['units'] }}</td>
+                                    <td>{{ number_format($grade['grade'], 2) }}</td>
+                                    <td>
+                                        @if($grade['grade'] == 5.00)
+                                            <span class="text-danger fw-bold">Failed</span>
+                                        @else
+                                            <span class="text-success fw-bold">Passed</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+
+                    {{-- Calculate and Display Average --}}
+                    <div class="text-center mt-3">
+                        @php
+                            // Calculate weighted average (assuming 'units' and 'grade' are numeric)
+                            $totalUnits = 0;
+                            $weightedGradeSum = 0;
+
+                            foreach ($grades as $grade) {
+                                $totalUnits += $grade['units'];
+                                $weightedGradeSum += $grade['units'] * $grade['grade'];
+                            }
+
+                            $averageGrade = $totalUnits > 0 ? $weightedGradeSum / $totalUnits : 0;
+                        @endphp
+
+
+                    </div>
+                    <h6 class="mt-3">
+                        Average Grade: {{ number_format($averageGrade, 2) }}
+                    </h6>
             @endif
         </div>
     </div>

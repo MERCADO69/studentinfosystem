@@ -150,5 +150,15 @@ class EnrollmentController extends Controller
         // Pass enrollments to the students view
         return view('admin.students.index', compact('enrollments'));
     }
+    public function getSubjects($id)
+    {
+        $enrollment = Enrollment::find($id);
+
+        if (!$enrollment) {
+            return response()->json(['error' => 'Enrollment not found'], 404);
+        }
+
+        return response()->json(['subjects' => $enrollment->subjects]);
+    }
 
 }

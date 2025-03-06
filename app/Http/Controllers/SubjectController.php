@@ -54,7 +54,7 @@ class SubjectController extends Controller
         if ($subject->enrollments()->count() > 0) {
             // If students are enrolled in the subject, prevent deletion and return an error message
             return redirect()->route('admin.subjects.index')
-                ->with('error', 'Subject cannot be deleted because students are enrolled.');
+                ->with('error', 'Unable to delete the subject, students are enrolled.');
         }
 
         // Proceed to delete the subject if no enrollments are linked

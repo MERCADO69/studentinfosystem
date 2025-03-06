@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\User;
 use App\Models\Enrollment;
 use Illuminate\Support\Facades\DB;
+
 class StudentController extends Controller
 {
     public function dashboard()

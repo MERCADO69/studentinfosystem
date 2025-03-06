@@ -51,20 +51,38 @@
                                 <a href="{{ route('admin.enrollments.edit', $enrollment->id) }}" class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
-                                <form action="{{ route('admin.enrollments.destroy', $enrollment->id) }}" method="POST"
-                                    class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm"
-                                        onclick="return confirm('Are you sure?');">
-                                        <i class="fas fa-trash"></i> Remove
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-danger btn-sm delete-btn" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal" data-id="{{ $enrollment->id }}">
+                                    <i class="fas fa-trash"></i> Remove
+                                </button>
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    {{-- Delete Confirmation Modal --}}
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this enrollment?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form id="deleteForm" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -199,6 +217,15 @@
                             new bootstrap.Modal(document.getElementById('subjectsModal')).show();
                         })
                         .catch(error => console.error('Error fetching subjects:', error));
+                });
+            });
+
+            // Handle delete button click
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    let enrollmentId = this.getAttribute('data-id');
+                    let form = document.getElementById('deleteForm');
+                    form.action = `/admin/enrollments/${enrollmentId}`;
                 });
             });
         });

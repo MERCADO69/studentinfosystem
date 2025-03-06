@@ -49,13 +49,39 @@
                                 <td>{{ $subject->units }}</td>
                                 <td>
                                     <a href="{{ route('admin.subjects.edit', $subject->id) }}" class="btn btn-primary">Edit</a>
-                                    <form action="{{ route('admin.subjects.destroy', $subject->id) }}" method="POST"
-                                        style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger"
-                                            onclick="return confirm('Are you sure?')">Delete</button>
-                                    </form>
+
+                                    <!-- Delete Button triggers modal -->
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal{{$subject->id}}">
+                                        Delete
+                                    </button>
+
+                                    <!-- Delete Confirmation Modal -->
+                                    <div class="modal fade" id="deleteModal{{$subject->id}}" tabindex="-1"
+                                        aria-labelledby="deleteModalLabel{{$subject->id}}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteModalLabel{{$subject->id}}">Confirm Deletion
+                                                    </h5>
+
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete <strong>{{ $subject->subject_name }}</strong>?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                    <form action="{{ route('admin.subjects.destroy', $subject->id) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

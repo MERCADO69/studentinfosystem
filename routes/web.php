@@ -52,6 +52,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/enrollments/{id}/subjects', [EnrollmentController::class, 'getSubjects']);
 
 
+
     Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::resource('students', StudentController::class)->names([
             'index' => 'admin.students.list',

@@ -22,7 +22,7 @@ class UpdateGradeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'grade' => 'required|numeric|min:1.00|max:5.00',
         ];
     }
 }

@@ -22,7 +22,9 @@ class StoreGradeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'student_id' => 'required|exists:enrollments,id',
+            'subject_id' => 'required|exists:subjects,id',
+            'grade' => 'required|numeric|min:1.00|max:5.00',
         ];
     }
 }

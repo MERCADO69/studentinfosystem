@@ -16,13 +16,18 @@ class StoreEnrollmentRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            //
+            'student_select' => 'required',
+            'last_name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'course' => 'required|string|max:255',
+            'year_level' => 'required|integer|between:1,4',
+            'subject_id' => 'required|array',
+            'subject_id.*' => 'exists:subjects,id',
+            'email' => 'required|email|unique:enrollments,email',
         ];
     }
 }

@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Requests\StoreEnrollmentRequest;
+use App\Http\Requests\UpdateEnrollmentRequest;
 use Illuminate\Http\Request;
 use App\Models\Enrollment;
 use Illuminate\Support\Facades\Hash;
@@ -22,21 +23,8 @@ class EnrollmentController extends Controller
         return view('admin.enrollments.index', compact('students', 'users', 'subjects', 'enrollments'));
     }
 
-
-
-    public function store(Request $request)
+    public function store(StoreEnrollmentRequest $request)
     {
-        $request->validate([
-            'student_select' => 'required',
-            'last_name' => 'required|string',
-            'first_name' => 'required|string',
-            'course' => 'required|string',
-            'year_level' => 'required|integer',
-            'subject_id' => 'required|array',
-            'subject_id.*' => 'exists:subjects,id',
-            'email' => 'required|email',
-        ]);
-
         // Check if the selected student is from `users` or `students`
         $student = Student::find($request->student_select);
         if (!$student) {
@@ -44,17 +32,15 @@ class EnrollmentController extends Controller
             if (!$user) {
                 return redirect()->back()->with('error', 'Selected student not found.');
             }
-            $student_id = $user->student_id; // Use student_id from users table
+            $student_id = $user->student_id;
         } else {
             $student_id = $student->student_id;
         }
 
-        // Check if the student is already enrolled
         if (Enrollment::where('student_id', $student_id)->exists()) {
             return redirect()->back()->with('error', 'Student is already enrolled.');
         }
 
-        // Store the enrollment
         $enrollment = Enrollment::create([
             'student_id' => $student_id,
             'last_name' => $request->last_name,
@@ -64,7 +50,6 @@ class EnrollmentController extends Controller
             'email' => $request->email,
         ]);
 
-        // Attach selected subjects to the enrollment
         $enrollment->subjects()->attach($request->subject_id);
 
         return redirect()->route('admin.enrollments.index')->with('success', 'Student successfully enrolled!');
@@ -79,23 +64,10 @@ class EnrollmentController extends Controller
     }
 
     // Update enrollment details
-    public function update(Request $request, $id)
+    public function update(UpdateEnrollmentRequest $request, $id)
     {
-        // Find the enrollment
         $enrollment = Enrollment::findOrFail($id);
 
-        // Validate the request
-        $request->validate([
-            'last_name' => 'required|string|max:255',
-            'first_name' => 'required|string|max:255',
-            'course' => 'required|string|max:255',
-            'year_level' => 'required|integer|between:1,4',
-            'subject_id' => 'required|array', // Ensure at least one subject is selected
-            'subject_id.*' => 'exists:subjects,id', // Ensure each subject exists
-            'email' => 'required|email|unique:enrollments,email,' . $id,
-        ]);
-
-        // Update enrollment details
         $enrollment->update([
             'last_name' => $request->last_name,
             'first_name' => $request->first_name,
@@ -104,7 +76,6 @@ class EnrollmentController extends Controller
             'email' => $request->email,
         ]);
 
-        // Update the student's details
         if ($enrollment->student) {
             $enrollment->student->update([
                 'last_name' => $request->last_name,
@@ -115,7 +86,6 @@ class EnrollmentController extends Controller
             ]);
         }
 
-        // Update the user's details if a linked account exists
         if ($enrollment->student && $enrollment->student->user) {
             $enrollment->student->user->update([
                 'name' => $request->first_name . ' ' . $request->last_name,
@@ -123,7 +93,6 @@ class EnrollmentController extends Controller
             ]);
         }
 
-        // Sync subjects in the pivot table
         $enrollment->subjects()->sync($request->subject_id);
 
         return redirect()->route('admin.enrollments.index')->with('success', 'Enrollment updated successfully!');

@@ -69,14 +69,12 @@
         </div>
     </div>
 
-
     {{-- Delete Confirmation Modal --}}
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-
                 </div>
                 <div class="modal-body">
                     Are you sure you want to delete this enrollment?
@@ -119,22 +117,62 @@
                     <form action="{{ route('admin.enrollments.store') }}" method="POST">
                         @csrf
 
+                        
                         {{-- Student Selection Dropdown --}}
                         <div class="mb-3">
                             <label for="student_select" class="form-label fw-bold">Select Student</label>
-                            <select class="form-select" id="student_select" name="student_select">
-                                <option value="" selected disabled>Choose a student...</option>
-                                @foreach($students as $student)
-                                    <option value="{{ $student->id }}" data-student_id="{{ $student->student_id }}"
-                                        data-last_name="{{ $student->last_name }}" data-first_name="{{ $student->first_name }}"
-                                        data-course="{{ $student->course }}" data-year_level="{{ $student->year_level }}"
-                                        data-email="{{ $student->email }}">
-                                        {{ $student->student_id }} - {{ $student->last_name }}, {{ $student->first_name }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="custom-dropdown">
+                                <select class="form-select w-100" id="student_select" name="student_select">
+                                    <option value="" selected disabled>Choose a student</option>
+                                    @foreach($students as $student)
+                                                                    @php
+                                                                        $isEnrolled = \App\Models\Enrollment::where('student_id', $student->student_id)->exists();
+                                                                    @endphp
+
+                                                                    <option value="{{ $isEnrolled ? '' : $student->id }}"
+                                                                        data-student_id="{{ $student->student_id }}"
+                                                                        data-last_name="{{ $student->last_name }}"
+                                                                        data-first_name="{{ $student->first_name }}" data-course="{{ $student->course }}"
+                                                                        data-year_level="{{ $student->year_level }}" data-email="{{ $student->email }}" {{ $isEnrolled ? 'disabled' : '' }}
+                                                                        style="{{ $isEnrolled ? 'color: green; font-weight: bold;' : '' }}">
+                                                                        {{ $student->student_id }} - {{ $student->last_name }}, {{ $student->first_name }}
+                                                                        @if($isEnrolled)
+                                                                            <span class="badge bg-success ms-2">Enrolled</span>
+                                                                        @endif
+                                                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
 
+                        <style>
+                            /* Custom Dropdown Styling */
+                            .custom-dropdown {
+                                position: relative;
+                            }
+
+                            .custom-dropdown select {
+                                appearance: none;
+                                -webkit-appearance: none;
+                                -moz-appearance: none;
+                                background-color: #fff;
+                                border: 1px solid #ced4da;
+                                border-radius: 8px;
+                                padding: 0.75rem 1rem;
+                                font-size: 1rem;
+                                color: #495057;
+                                width: 100%;
+                                cursor: pointer;
+                                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                            }
+
+                            .custom-dropdown select:focus {
+                                border-color: #80bdff;
+                                outline: none;
+                                box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+                            }
+
+                        </style>
                         {{-- Autofilled Student Details --}}
                         <div class="row">
                             @foreach(['student_id' => 'Student ID', 'last_name' => 'Last Name', 'first_name' => 'First Name', 'course' => 'Course', 'year_level' => 'Year Level', 'email' => 'Email'] as $field => $label)

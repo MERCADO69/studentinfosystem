@@ -25,17 +25,22 @@
 
                 <div class="mb-3">
                     <label class="form-label">Student ID</label>
-                    <input type="text" name="student_id" class="form-control" value="{{ $student->student_id }}" required>
+                    <input type="text" name="student_id" class="form-control" value="{{ $student->student_id }}" readonly
+                        style="cursor: not-allowed;" title="Student ID cannot be edited.">
                 </div>
+
+
 
                 <div class="mb-3">
                     <label class="form-label">Last Name</label>
-                    <input type="text" name="last_name" class="form-control" value="{{ $student->last_name }}" required oninput="validateLettersOnly(this)">
+                    <input type="text" name="last_name" class="form-control" value="{{ $student->last_name }}" required
+                        oninput="validateLettersOnly(this)">
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">First Name</label>
-                    <input type="text" name="first_name" class="form-control" value="{{ $student->first_name }}" required oninput="validateLettersOnly(this)">
+                    <input type="text" name="first_name" class="form-control" value="{{ $student->first_name }}" required
+                        oninput="validateLettersOnly(this)">
                 </div>
 
                 <div class="mb-3">
@@ -45,7 +50,8 @@
 
                 <div class="mb-3">
                     <label class="form-label">Year Level</label>
-                    <input type="number" name="year_level" class="form-control" value="{{ $student->year_level }}" min="1" max="4" required>
+                    <input type="number" name="year_level" class="form-control" value="{{ $student->year_level }}" min="1"
+                        max="4" required>
                 </div>
 
                 <div class="mb-3">

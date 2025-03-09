@@ -78,6 +78,8 @@ class StudentController extends Controller
     {
         $validated = $request->validated();
         $student = Student::findOrFail($id);
+
+        // ✅ Update the student table first
         $student->update([
             'last_name' => $validated['last_name'],
             'first_name' => $validated['first_name'],
@@ -85,15 +87,31 @@ class StudentController extends Controller
             'year_level' => $validated['year_level'],
             'email' => $validated['email'],
         ]);
-        $user = User::where('student_id', $student->student_id)->first(); // Use `student_id` to find the user
+
+        // ✅ Update the User table if linked
+        $user = User::where('student_id', $student->student_id)->first();
         if ($user) {
             $user->update([
-                'name' => $validated['last_name'] . ' ' . $validated['first_name'],
+                'name' => $validated['first_name'] . ' ' . $validated['last_name'],
                 'email' => $validated['email'],
             ]);
         }
+
+        // ✅ Update the Enrollment table if the student is already enrolled
+        $enrollment = Enrollment::where('student_id', $student->student_id)->first();
+        if ($enrollment) {
+            $enrollment->update([
+                'last_name' => $validated['last_name'],
+                'first_name' => $validated['first_name'],
+                'course' => $validated['course'],
+                'year_level' => $validated['year_level'],
+                'email' => $validated['email'],
+            ]);
+        }
+
         return redirect()->route('admin.students.list')->with('success', 'Student updated successfully');
     }
+
 
     public function destroy($id)
     {

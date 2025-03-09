@@ -49,61 +49,67 @@
             @if($grades->isEmpty())
                 <p>No grades recorded for this student.</p>
             @else
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Subject</th>
-                            <th>Current Grade</th>
-                            <th>Status</th> <!-- New Column -->
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($grades as $grade)
-                            <tr>
-                                <td>{{ $grade->subject->subject_name }}</td>
-                                <td>
-                                    <form action="{{ route('admin.grades.update', $grade->id) }}" method="POST" class="form-inline">
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="input-group">
-                                            <select name="grade" class="form-control">
-                                                @for($i = 1.00; $i <= 3.00; $i += 0.25)
-                                                    @php 
-                                                        $formattedGrade = number_format($i, 2); 
-                                                    @endphp
-                                                    <option value="{{ $formattedGrade }}" {{ $grade->grade == $i ? 'selected' : '' }}>
-                                                        {{ $formattedGrade }}
-                                                    </option>
-                                                @endfor
-                                                <option value="5.00" {{ $grade->grade == 5.00 ? 'selected' : '' }}>5.00</option>
-                                                <!-- Failing Grade -->
-                                            </select>
-                                            <div class="input-group-append">
-                                                <button type="submit" class="btn btn-primary">Update</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </td>
-                                <td>
-                                    <span style="color: {{ $grade->grade == 5.00 ? 'red' : 'green' }}; font-weight: bold;">
-                                        {{ $grade->grade == 5.00 ? 'Failed' : 'Passed' }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <form action="{{ route('admin.grades.destroy', $grade->id) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger"
-                                            onclick="return confirm('Are you sure you want to delete this grade?')">
-                                            Delete
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                <div class="card shadow-sm rounded">
+                    <div class="card-body">
+                        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                            <table class="table table-bordered text-center align-middle">
+                                <thead class="table-light sticky-top">
+                                    <tr>
+                                        <th>Subject</th>
+                                        <th>Current Grade</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($grades as $grade)
+                                        <tr>
+                                            <td>{{ $grade->subject->subject_name }}</td>
+                                            <td>
+                                                <form action="{{ route('admin.grades.update', $grade->id) }}" method="POST"
+                                                    class="d-flex">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <select name="grade" class="form-select form-select-sm">
+                                                        @for($i = 1.00; $i <= 3.00; $i += 0.25)
+                                                            @php 
+                                                                $formattedGrade = number_format($i, 2); 
+                                                            @endphp
+                                                            <option value="{{ $formattedGrade }}" {{ $grade->grade == $i ? 'selected' : '' }}>{{ $formattedGrade }}
+                                                            </option>
+                                                        @endfor
+                                                        <option value="5.00" {{ $grade->grade == 5.00 ? 'selected' : '' }}>5.00
+                                                        </option>
+                                                    </select>
+                                                    <button type="submit" class="btn btn-primary btn-sm ms-2">
+                                                        <i class="fas fa-check"></i> Update
+                                                    </button>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <span
+                                                    style="color: {{ $grade->grade == 5.00 ? 'red' : 'green' }}; font-weight: bold;">
+                                                    {{ $grade->grade == 5.00 ? 'Failed' : 'Passed' }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <form action="{{ route('admin.grades.destroy', $grade->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm"
+                                                        onclick="return confirm('Are you sure you want to delete this grade?')">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             @endif
         </div>
     </div>

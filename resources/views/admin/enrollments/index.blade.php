@@ -22,10 +22,11 @@
     {{-- Enrolled Students Table --}}
     <div class="card shadow-sm rounded">
         <div class="card-body">
-            {{-- Scrollable Table Container --}}
-            <div style="max-height: 500px; overflow-y: auto;">
-                <table class="table table-bordered text-center align-middle">
-                    <thead class="table-light">
+            {{-- Scrollable Table Container with Sticky Header --}}
+            <div style="max-height: 500px; overflow-y: auto; border: 1px solid #dee2e6;">
+                <table class="table table-bordered text-center align-middle"
+                    style="width: 100%; border-collapse: collapse;">
+                    <thead class="table-light" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
                         <tr>
                             <th>Student ID</th>
                             <th>Name</th>
@@ -49,7 +50,6 @@
                                         data-enrollment-id="{{ $enrollment->id }}">
                                         <i class="fas fa-eye"></i> View Subjects
                                     </button>
-
                                 </td>
                                 <td>
                                     <a href="{{ route('admin.enrollments.edit', $enrollment->id) }}"
@@ -68,6 +68,7 @@
             </div>
         </div>
     </div>
+
 
     {{-- Delete Confirmation Modal --}}
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">

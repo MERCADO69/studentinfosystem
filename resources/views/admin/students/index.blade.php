@@ -26,6 +26,7 @@
     @endif
 
     {{-- Students Table --}}
+    {{-- Students Table --}}
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">List of Enrolled Students</h3>
@@ -34,10 +35,10 @@
             @if($enrollments->isEmpty())
                 <p>No students found.</p>
             @else
-                {{-- Scrollable Table Container --}}
-                <div style="max-height: 500px; overflow-y: auto;">
-                    <table class="table table-bordered">
-                        <thead>
+                {{-- Scrollable Table Container with Sticky Header --}}
+                <div style="max-height: 500px; overflow-y: auto; border: 1px solid #dee2e6;">
+                    <table class="table table-bordered" style="width: 100%; border-collapse: collapse;">
+                        <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
                             <tr>
                                 <th>Student ID</th>
                                 <th>Enrollment Number</th>
@@ -76,14 +77,12 @@
                                 })->toArray()) }}">
                                                         <i class="fas fa-eye"></i> View Grades
                                                     </button>
-
                                                 </td>
                                                 <td>
                                                     <a href="{{ route('admin.grades.edit', $enrollment->id) }}" class="btn btn-sm text-white"
                                                         style="background-color: #FF8C00; border: none;">
                                                         <i class="fas fa-plus"></i> <i class="fas fa-edit"></i> Add & Edit Grades
                                                     </a>
-
                                                 </td>
                                             </tr>
                             @endforeach
@@ -93,7 +92,6 @@
             @endif
         </div>
     </div>
-
     <!-- Grades Modal -->
     <div class="modal fade" id="gradesModal" tabindex="-1" role="dialog" aria-labelledby="gradesModalLabel"
         aria-hidden="true">
@@ -166,18 +164,18 @@
                         let gradeClass = (grade.grade == 5.00) ? 'text-danger' : 'text-success';
 
                         $('#gradesList').append(`
-                                                                                        <tr>
-                                                                                            <td>${grade.subject}</td>
-                                                                                            <td class="${gradeClass}"><strong>${grade.grade}</strong></td>
-                                                                                        </tr>
-                                                                                    `);
+                                                                                                <tr>
+                                                                                                    <td>${grade.subject}</td>
+                                                                                                    <td class="${gradeClass}"><strong>${grade.grade}</strong></td>
+                                                                                                </tr>
+                                                                                            `);
                     });
                 } else {
                     $('#gradesList').append(`
-                                                                                    <tr>
-                                                                                        <td colspan="2" class="text-center">No grades assigned</td>
-                                                                                    </tr>
-                                                                                `);
+                                                                                            <tr>
+                                                                                                <td colspan="2" class="text-center">No grades assigned</td>
+                                                                                            </tr>
+                                                                                        `);
                 }
             });
 

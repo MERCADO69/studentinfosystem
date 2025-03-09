@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Illuminate\Support\Str; // ✅ For random password generator
 
 class RegisteredUserController extends Controller
 {
@@ -39,7 +40,10 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:students,email'],
         ]);
 
-        // Step 1: Create the Student First
+        // ✅ Generate a RANDOM 8-character password
+        $randomPassword = Str::random(8); // This generates 8 random characters
+
+        // ✅ Step 1: Create the Student First
         $student = Student::create([
             'student_id' => $request->student_id,
             'last_name' => $request->last_name,
@@ -49,18 +53,25 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
         ]);
 
-        // Step 2: Create the User Using student_id as Foreign Key
+        // ✅ Step 2: Create the User Using student_id as Foreign Key
         $user = User::create([
             'name' => $request->first_name . ' ' . $request->last_name,
             'email' => $request->email,
-            'password' => Hash::make('12345678'), // Default Password
-            'student_id' => $student->student_id, // Link via student_id
+            'password' => Hash::make($randomPassword), // ✅ Use the randomized password
+            'student_id' => $student->student_id,
             'role' => 'student',
         ]);
 
+        // ✅ Step 3: Send the email with the password
+        $user->notify(new \App\Notifications\PasswordNotification($randomPassword));
+
+        // ✅ Step 4: Fire the registration event
         event(new Registered($user));
+
+        // ✅ Step 5: Auto-login the user
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false))->with('success', 'Account successfully registered!');
+        // ✅ Step 6: Redirect to dashboard
+        return redirect(route('dashboard'))->with('success', 'Account successfully registered. Check your email for the password!');
     }
 }

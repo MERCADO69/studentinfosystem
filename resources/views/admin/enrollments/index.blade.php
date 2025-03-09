@@ -137,14 +137,13 @@
                                                                         style="{{ $isEnrolled ? 'color: green; font-weight: bold;' : '' }}">
                                                                         {{ $student->student_id }} - {{ $student->last_name }}, {{ $student->first_name }}
                                                                         @if($isEnrolled)
-                                                                            <span class="badge bg-success ms-2">Enrolled</span>
+                                                                            <span class="badge bg-success ms-2"></span>
                                                                         @endif
                                                                     </option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
-
                         <style>
                             /* Custom Dropdown Styling */
                             .custom-dropdown {
@@ -167,7 +166,7 @@
                             }
 
                             .custom-dropdown select:focus {
-                                border-color: #80bdff;
+                                border-color:rgb(0, 152, 48);
                                 outline: none;
                                 box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
                             }

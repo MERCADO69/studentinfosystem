@@ -24,47 +24,50 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <table class="table table-bordered text-center align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>Student ID</th>
-                        <th>Last Name</th>
-                        <th>First Name</th>
-                        <th>Course</th>
-                        <th>Year Level</th>
-                        <th>Email</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($students as $student)
+            {{-- Scrollable Table Container --}}
+            <div style="max-height: 500px; overflow-y: auto;">
+                <table class="table table-bordered text-center align-middle">
+                    <thead class="table-light">
                         <tr>
-                            <td class="fw-bold">{{ $student->student_id }}</td>
-                            <td>{{ $student->last_name }}</td>
-                            <td>{{ $student->first_name }}</td>
-                            <td>{{ $student->course }}</td>
-                            <td>{{ $student->year_level }}</td>
-                            <td>{{ $student->email }}</td>
-                            <td>
-                                <a href="{{ route('admin.students.edit', $student->id) }}" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-
-                                @if (\App\Models\Enrollment::where('student_id', $student->student_id)->exists())
-                                    <button class="btn btn-danger btn-sm" disabled>
-                                        Cannot Delete (Enrolled)
-                                    </button>
-                                @else
-                                    <button type="button" class="btn btn-danger btn-sm delete-btn"
-                                        data-student-id="{{ $student->id }}">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-                                @endif
-                            </td>
+                            <th>Student ID</th>
+                            <th>Last Name</th>
+                            <th>First Name</th>
+                            <th>Course</th>
+                            <th>Year Level</th>
+                            <th>Email</th>
+                            <th>Actions</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($students as $student)
+                            <tr>
+                                <td class="fw-bold">{{ $student->student_id }}</td>
+                                <td>{{ $student->last_name }}</td>
+                                <td>{{ $student->first_name }}</td>
+                                <td>{{ $student->course }}</td>
+                                <td>{{ $student->year_level }}</td>
+                                <td>{{ $student->email }}</td>
+                                <td>
+                                    <a href="{{ route('admin.students.edit', $student->id) }}" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+
+                                    @if (\App\Models\Enrollment::where('student_id', $student->student_id)->exists())
+                                        <button class="btn btn-danger btn-sm" disabled>
+                                            Cannot Delete (Enrolled)
+                                        </button>
+                                    @else
+                                        <button type="button" class="btn btn-danger btn-sm delete-btn"
+                                            data-student-id="{{ $student->id }}">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

@@ -22,44 +22,50 @@
     {{-- Enrolled Students Table --}}
     <div class="card shadow-sm rounded">
         <div class="card-body">
-            <table class="table table-bordered text-center align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>Student ID</th>
-                        <th>Name</th>
-                        <th>Course</th>
-                        <th>Year Level</th>
-                        <th>Email</th>
-                        <th>Subjects</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($enrollments as $enrollment)
+            {{-- Scrollable Table Container --}}
+            <div style="max-height: 500px; overflow-y: auto;">
+                <table class="table table-bordered text-center align-middle">
+                    <thead class="table-light">
                         <tr>
-                            <td class="fw-bold">{{ $enrollment->student ? $enrollment->student->student_id : 'N/A' }}</td>
-                            <td>{{ $enrollment->last_name }}, {{ $enrollment->first_name }}</td>
-                            <td>{{ $enrollment->course }}</td>
-                            <td>{{ $enrollment->year_level }}</td>
-                            <td>{{ $enrollment->email }}</td>
-                            <td>
-                                <button class="btn btn-info btn-sm view-subjects" data-enrollment-id="{{ $enrollment->id }}">
-                                    <i class="fas fa-book"></i> View Subjects
-                                </button>
-                            </td>
-                            <td>
-                                <a href="{{ route('admin.enrollments.edit', $enrollment->id) }}" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-                                <button type="button" class="btn btn-danger btn-sm delete-btn" data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal" data-id="{{ $enrollment->id }}">
-                                    <i class="fas fa-trash"></i> Remove
-                                </button>
-                            </td>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Course</th>
+                            <th>Year Level</th>
+                            <th>Email</th>
+                            <th>Subjects</th>
+                            <th>Actions</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach($enrollments as $enrollment)
+                            <tr>
+                                <td class="fw-bold">{{ $enrollment->student ? $enrollment->student->student_id : 'N/A' }}</td>
+                                <td>{{ $enrollment->last_name }}, {{ $enrollment->first_name }}</td>
+                                <td>{{ $enrollment->course }}</td>
+                                <td>{{ $enrollment->year_level }}</td>
+                                <td>{{ $enrollment->email }}</td>
+                                <td>
+                                    <button class="btn btn-info btn-sm view-subjects"
+                                        data-enrollment-id="{{ $enrollment->id }}">
+                                        <i class="fas fa-eye"></i> View Subjects
+                                    </button>
+
+                                </td>
+                                <td>
+                                    <a href="{{ route('admin.enrollments.edit', $enrollment->id) }}"
+                                        class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <button type="button" class="btn btn-danger btn-sm delete-btn" data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal" data-id="{{ $enrollment->id }}">
+                                        <i class="fas fa-trash"></i> Remove
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

@@ -33,7 +33,16 @@ class StudentController extends Controller
     public function store(StoreStudentRequest $request)
     {
         $validated = $request->validated();
+
         try {
+            // Check if the student already exists in the students table
+            $existingStudent = Student::where('student_id', $validated['student_id'])->first();
+
+            if ($existingStudent) {
+                return redirect()->back()->with('error', 'Student already exists in the system.');
+            }
+
+            // Create the student record
             $student = Student::create([
                 'student_id' => $validated['student_id'],
                 'first_name' => $validated['first_name'],
@@ -42,6 +51,15 @@ class StudentController extends Controller
                 'course' => $validated['course'],
                 'year_level' => $validated['year_level'],
             ]);
+
+            // Check if the student_id already exists in users table
+            $existingUser = User::where('student_id', $validated['student_id'])->first();
+
+            if ($existingUser) {
+                return redirect()->back()->with('error', 'User already exists with this student ID.');
+            }
+
+            // Create the user record
             $password = $request->password ? bcrypt($request->password) : bcrypt('12345678');
             User::create([
                 'student_id' => $student->student_id,
@@ -55,6 +73,7 @@ class StudentController extends Controller
             return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
+
     public function create()
     {
         return view('admin.students.addstudent');

@@ -152,7 +152,7 @@
                         </div>
 
                         <div class="d-flex justify-content-start gap-3 mt-3">
-                            <button type="submit" class="btn btn-success">Add New Grade</button>
+                            <button type="submit" class="btn btn-success">Add Grade</button>
                         </div>
                     </form>
                 </div>

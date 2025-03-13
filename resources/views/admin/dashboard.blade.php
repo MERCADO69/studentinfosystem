@@ -1,4 +1,4 @@
-@extends('adminlte::page') {{-- Make sure you're using the correct AdminLTE layout --}}
+@extends('adminlte::page')
 
 @section('title', 'Admin Dashboard')
 

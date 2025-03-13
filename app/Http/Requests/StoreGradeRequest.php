@@ -24,7 +24,7 @@ class StoreGradeRequest extends FormRequest
         return [
             'student_id' => 'required|exists:enrollments,id',
             'subject_id' => 'required|exists:subjects,id',
-            'grade' => 'required|numeric|min:1.00|max:5.00',
+            'grade' => 'required|in:1.00,1.25,1.50,1.75,2.00,2.25,2.50,2.75,3.00,5.00',
         ];
     }
 }

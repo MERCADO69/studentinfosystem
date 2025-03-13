@@ -11,8 +11,10 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('subject_id');
-            // Fix for the float parameters - use decimal instead with precision and scale
-            $table->decimal('grade', 5, 2); // 5 total digits, 2 after decimal point
+
+            // Restrict grades using ENUM
+            $table->enum('grade', ['1.00', '1.25', '1.50', '1.75', '2.00', '2.25', '2.50', '2.75', '3.00', '5.00']);
+
             $table->timestamps();
 
             // Composite unique key to prevent duplicate grades for the same student-subject pair

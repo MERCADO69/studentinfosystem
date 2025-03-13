@@ -79,8 +79,7 @@
                                                             </option>
                                                         @endfor
                                                         <option value="5.00" {{ $grade->grade == 5.00 ? 'selected' : '' }}>5.00
-                                                        </option>
-                                                    </select>
+                                                        </option></select>
                                                     <button type="submit" class="btn btn-primary btn-sm ms-2">
                                                         <i class="fas fa-check"></i> Update
                                                     </button>
@@ -118,7 +117,7 @@
         <div class="col-md-6 col-lg-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Add New Grade</h3>
+                    <h3 class="card-title">Add Grade</h3>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('admin.grades.store') }}" method="POST">

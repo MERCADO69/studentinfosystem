@@ -34,15 +34,21 @@ class StudentController extends Controller
     {
         $validated = $request->validated();
 
+        // Check if student_id exists in the students table
+        if (Student::where('student_id', $validated['student_id'])->exists()) {
+            return redirect()->back()->with('error', 'Student already exists in the system.');
+        }
+
+        // Check if student_id exists in the users table
+        if (User::where('student_id', $validated['student_id'])->exists()) {
+            return redirect()->back()->with('error', 'A user account with this student ID already exists.');
+        }
+
         try {
-            // Check if the student already exists in the students table
-            $existingStudent = Student::where('student_id', $validated['student_id'])->first();
+            // Start Transaction to ensure atomicity
+            DB::beginTransaction();
 
-            if ($existingStudent) {
-                return redirect()->back()->with('error', 'Student already exists in the system.');
-            }
-
-            // Create the student record
+            // ✅ Create the student record
             $student = Student::create([
                 'student_id' => $validated['student_id'],
                 'first_name' => $validated['first_name'],
@@ -52,15 +58,8 @@ class StudentController extends Controller
                 'year_level' => $validated['year_level'],
             ]);
 
-            // Check if the student_id already exists in users table
-            $existingUser = User::where('student_id', $validated['student_id'])->first();
-
-            if ($existingUser) {
-                return redirect()->back()->with('error', 'User already exists with this student ID.');
-            }
-
-            // Create the user record
-            $password = $request->password ? bcrypt($request->password) : bcrypt('12345678');
+            // ✅ Create the user record after the student is successfully created
+            $password = bcrypt($request->password ?? '12345678');
             User::create([
                 'student_id' => $student->student_id,
                 'name' => $student->first_name . ' ' . $student->last_name,
@@ -68,11 +67,17 @@ class StudentController extends Controller
                 'password' => $password,
             ]);
 
+            // ✅ Commit transaction (everything is successful)
+            DB::commit();
+
             return redirect()->back()->with('success', 'Student and user created successfully!');
         } catch (\Exception $e) {
+            // ❌ Rollback transaction if something goes wrong
+            DB::rollBack();
             return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
+
 
     public function create()
     {

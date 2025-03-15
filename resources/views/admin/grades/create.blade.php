@@ -32,7 +32,7 @@
                     <select name="student_id" id="student_id" class="form-control" required>
                         <option value="">Select Student</option>
                         @foreach($enrollments as $enrollment)
-                            <option value="{{ $enrollment->id }}">
+                            <option value="{{ $enrollment->student_id }}">
                                 {{ $enrollment->student_id }} - {{ $enrollment->first_name }} {{ $enrollment->last_name }}
                             </option>
                         @endforeach

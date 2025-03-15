@@ -26,7 +26,6 @@
     @endif
 
     {{-- Students Table --}}
-    {{-- Students Table --}}
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">List of Enrolled Students</h3>
@@ -164,18 +163,18 @@
                         let gradeClass = (grade.grade == 5.00) ? 'text-danger' : 'text-success';
 
                         $('#gradesList').append(`
-                                                                                                                                                                                                                        <tr>
-                                                                                                                                                                                                                            <td>${grade.subject}</td>
-                                                                                                                                                                                                                            <td class="${gradeClass}"><strong>${grade.grade}</strong></td>
-                                                                                                                                                                                                                        </tr>
-                                                                                                                                                                                                                    `);
+                                                                                                                                                                                                                                <tr>
+                                                                                                                                                                                                                                    <td>${grade.subject}</td>
+                                                                                                                                                                                                                                    <td class="${gradeClass}"><strong>${grade.grade}</strong></td>
+                                                                                                                                                                                                                                </tr>
+                                                                                                                                                                                                                            `);
                     });
                 } else {
                     $('#gradesList').append(`
-                                                                                                                                                                                                                    <tr>
-                                                                                                                                                                                                                        <td colspan="2" class="text-center">No grades assigned</td>
-                                                                                                                                                                                                                    </tr>
-                                                                                                                                                                                                                `);
+                                                                                                                                                                                                                            <tr>
+                                                                                                                                                                                                                                <td colspan="2" class="text-center">No grades assigned</td>
+                                                                                                                                                                                                                            </tr>
+                                                                                                                                                                                                                        `);
                 }
             });
 

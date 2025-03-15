@@ -30,12 +30,6 @@ class GradeController extends Controller
     // Store the grade
     public function store(StoreGradeRequest $request)
     {
-
-        // Extra validation (optional but adds extra security)
-        $validGrades = ['1.00', '1.25', '1.50', '1.75', '2.00', '2.25', '2.50', '2.75', '3.00', '5.00'];
-        if (!in_array($request->grade, $validGrades)) {
-            return redirect()->back()->withErrors(['grade' => 'Invalid grade selected.']);
-        }
         // Create or update the grade
         Grade::updateOrCreate(
             [

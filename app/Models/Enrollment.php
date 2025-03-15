@@ -23,7 +23,7 @@ class Enrollment extends Model
     // Enrollment.php
     public function student()
     {
-        return $this->belongsTo(Student::class, 'student_id', 'student_id'); // Corrected to use 'student_id'
+        return $this->belongsTo(Student::class, 'student_id', 'student_id', 'id'); // Corrected to use 'student_id'
     }
 
 

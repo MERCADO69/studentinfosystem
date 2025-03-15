@@ -19,9 +19,9 @@ class Grade extends Model
 
     // Relationship: Grade belongs to a Subject
     public function subject()
-{
-    return $this->belongsTo(Subject::class, 'subject_id', 'id');
-}
+    {
+        return $this->belongsTo(Subject::class, 'subject_id', 'id');
+    }
     // Relationship: Grade belongs to an Enrollment
     public function enrollment()
     {
